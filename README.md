@@ -1,0 +1,2 @@
+# SkipAdsAlwaysActive_Android_Project
+Android background service
