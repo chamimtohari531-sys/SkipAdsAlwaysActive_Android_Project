@@ -21,18 +21,15 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Locate Android project
-        run: |
-          find . -name gradlew -type f
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build APK
-        run: |
-          chmod +x ./gradlew
-          ./gradlew assembleDebug
+        run: gradle --no-daemon assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: SkipAdsAlwaysActive-APK
-          path: '**/build/outputs/apk/debug/*.apk'
+          path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
