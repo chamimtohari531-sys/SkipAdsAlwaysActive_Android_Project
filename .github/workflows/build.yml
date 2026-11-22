@@ -50,6 +50,30 @@ jobs:
 
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
+      - name: Set Java and Kotlin target to 17
+        shell: bash
+        run: |
+          BUILD_FILE="$PROJECT_DIR/app/build.gradle.kts"
+
+          if grep -q 'sourceCompatibility' "$BUILD_FILE"; then
+            sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' "$BUILD_FILE"
+          fi
+
+          if ! grep -q 'targetCompatibility = JavaVersion.VERSION_17' "$BUILD_FILE"; then
+            sed -i '/android {/a\
+                compileOptions {\
+                    sourceCompatibility = JavaVersion.VERSION_17\
+                    targetCompatibility = JavaVersion.VERSION_17\
+                }' "$BUILD_FILE"
+          fi
+
+          if ! grep -q 'jvmTarget = "17"' "$BUILD_FILE"; then
+            sed -i '/android {/a\
+                kotlinOptions {\
+                    jvmTarget = "17"\
+                }' "$BUILD_FILE"
+          fi
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
