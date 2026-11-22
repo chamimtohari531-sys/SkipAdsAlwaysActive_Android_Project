@@ -26,7 +26,10 @@ jobs:
 
       - name: Install Android SDK
         run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager --install \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
 
       - name: Prepare Android project
         run: |
@@ -35,6 +38,24 @@ jobs:
           cp AndroidManifest.xml app/src/main/AndroidManifest.xml
           cp MainActivity.kt app/src/main/java/com/example/skipadsalwaysactive/
           cp KeepAliveService.kt app/src/main/java/com/example/skipadsalwaysactive/
+
+          cat > settings.gradle.kts <<'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.name = "SkipAdsAlwaysActive"
+          include(":app")
+          EOF
 
           cat > build.gradle.kts <<'EOF'
           plugins {
