@@ -1,21 +1,18 @@
 
-name: Build Skip Ads APK
+name: Build SkipAdsAlwaysActive APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps: 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: SkipAdsAlwaysActive-APK
-          path: app/build/outputs/apk/**/*.apk
-          if-no-files-found: error
-      - name: Checkout repository
+    steps:
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Java
@@ -24,14 +21,18 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
-
-      - name: Install Android SDK packages
+      - name: Locate Android project
         run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          find . -name gradlew -type f
 
-      - name: Check project files
+      - name: Build APK
         run: |
-          echo "Checking project structure"
-          find . -maxdepth 4 -type f | sort | head -150
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SkipAdsAlwaysActive-APK
+          path: '**/build/outputs/apk/debug/*.apk'
+          if-no-files-found: error
