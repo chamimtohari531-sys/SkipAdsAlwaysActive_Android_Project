@@ -1,4 +1,3 @@
-
 name: Build SkipAdsAlwaysActive APK
 
 on:
@@ -23,6 +22,8 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          log-accepted-android-sdk-licenses: 'false'
 
       - name: Install Android SDK
         run: |
@@ -47,6 +48,7 @@ jobs:
                   gradlePluginPortal()
               }
           }
+
           dependencyResolutionManagement {
               repositories {
                   google()
@@ -107,3 +109,4 @@ jobs:
           name: SkipAdsAlwaysActive-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
